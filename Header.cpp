@@ -4,17 +4,19 @@
 #include <Windows.h>
 #include <string>
 #include <fstream>
-#include <list>
 
 using namespace std;
 
-list<Employee> employees;
-const string fileName = "Employee.txt";
+Employee *employee;
+int countEmployee;
 
 void init()
 {
+	int currentString = 0;
+	int currentString2 = 0;
+	string data;
 	ifstream fin;
-	fin.open(fileName);
+	fin.open("Employee.txt");
 	bool isOpen = fin.is_open();
 	if (isOpen == false)
 	{
@@ -22,219 +24,388 @@ void init()
 	}
 	else
 	{
-		int currentString = 0;
-		string data;
-		Employee oldEmployee;
 		while (!fin.eof())
 		{
 			currentString++;
 			getline(fin, data);
-			if (currentString == 1)
+		}
+		currentString2 = (currentString - 1) / 7;
+		currentString = 0;
+	}
+	fin.close();
+	countEmployee = currentString2;
+	Employee *temp1 = new Employee[currentString2];
+	int f = 0;
+	fin.open("Employee.txt");
+	bool isOpenn = fin.is_open();
+	if (isOpenn == false)
+	{
+		cout << "Error" << endl;
+	}
+	else
+	{
+		while (!fin.eof())
+		{
+			currentString++;
+			getline(fin, data);
+			for (int i = f; i < currentString2;)
 			{
-				oldEmployee.name = data;
-			}
-			else if (currentString == 2)
-			{
-				oldEmployee.surname = data;
-			}
-			else if (currentString == 3)
-			{
-				oldEmployee.education = data;
-			}
-			else if (currentString == 4)
-			{
-				oldEmployee.age = data;
-			}
-			else if (currentString == 5)
-			{
-				oldEmployee.createDateOfBirth.day = data;
-			}
-			else if (currentString == 6)
-			{
-				oldEmployee.createDateOfBirth.month = data;
-			}
-			else if (currentString == 7)
-			{
-				oldEmployee.createDateOfBirth.year = data;
-				currentString = 0;
-				employees.push_back(oldEmployee);
-				oldEmployee = Employee();
+				if (currentString == 1)
+				{
+					temp1[i].name = data;
+					break;
+				}
+				else if (currentString == 2)
+				{
+					temp1[i].surname = data;
+					break;
+				}
+				else if (currentString == 3)
+				{
+					temp1[i].education = data;
+					break;
+				}
+				else if (currentString == 4)
+				{
+					temp1[i].age = data;
+					break;
+				}
+				else if (currentString == 5)
+				{
+					temp1[i].createDateOfBirth.day = data;
+					break;
+				}
+				else if (currentString == 6)
+				{
+					temp1[i].createDateOfBirth.month = data;
+					break;
+				}
+				else if (currentString == 7)
+				{
+					temp1[i].createDateOfBirth.year = data;
+					currentString = 0;
+					f++;
+					break;
+				}
 			}
 		}
+		employee = temp1;
 	}
 	fin.close();
 }
 
 void addNewEmployee()
 {
-	Employee newEmployee;
-	cout << "Name of new employee -> ";
-	cin >> newEmployee.name;
-	cout << "Surname of new employee -> ";
-	cin >> newEmployee.surname;
-	cout << "Education of new employee -> ";
-	cin.ignore();
-	getline(cin, newEmployee.education);
-	cout << "Age of new employee -> ";
-	cin >> newEmployee.age;
-	cout << "Date of birth of new employee:" << endl;
-	cout << "Day -> ";
-	cin >> newEmployee.createDateOfBirth.day;
-	cout << "Month -> ";
-	cin >> newEmployee.createDateOfBirth.month;
-	cout << "Yera -> ";
-	cin >> newEmployee.createDateOfBirth.year;
-	employees.push_back(newEmployee);
-
 	ofstream fout;
-	fout.open(fileName, fstream::app);
+	fout.open("Employee.txt", fstream::app);
 	bool isOpen = fout.is_open();
-	if (isOpen == false)
+	if (isOpen == true)
 	{
-		cout << "Error: Application can't connect to database file" << endl;
+		Employee *temp = new Employee[countEmployee + 1];
+		for (int i = 0; i < countEmployee; i++)
+		{
+			temp[i] = employee[i];
+		}
+
+		//Вносимо данні про нову вікторину
+		cout << "Enter name of new employee" << endl;
+		cin >> temp[countEmployee].name;
+		cout << "Enter surname of new employee" << endl;
+		cin >> temp[countEmployee].surname;
+		cout << "Enter education of new employee" << endl;
+		cin >> temp[countEmployee].education;
+		cout << "Enter age of new employee" << endl;
+		cin >> temp[countEmployee].age;
+		cout << "Enter data of birth of new employee" << endl;
+		cout << "Enter day --> ";
+		cin >> temp[countEmployee].createDateOfBirth.day;
+		cout << "Enter month --> ";
+		cin >> temp[countEmployee].createDateOfBirth.month;
+		cout << "Enter year --> ";
+		cin >> temp[countEmployee].createDateOfBirth.year;
+
+		fout << temp[countEmployee].name << endl;
+		fout << temp[countEmployee].surname << endl;
+		fout << temp[countEmployee].education << endl;
+		fout << temp[countEmployee].age << endl;
+		fout << temp[countEmployee].createDateOfBirth.day << endl;
+		fout << temp[countEmployee].createDateOfBirth.month << endl;
+		fout << temp[countEmployee].createDateOfBirth.year << endl;
+
+		fout.close();
+		countEmployee++;
+		delete[] employee;
+		employee = temp;
+		cout << "Employee successfully added..." << endl;
+		PAUSE
+		CLEAR
 	}
 	else
 	{
-		cout << "File open!" << endl;
-		fout << newEmployee.name << endl;
-		fout << newEmployee.surname << endl;
-		fout << newEmployee.education << endl;
-		fout << newEmployee.age << endl;
-		fout << newEmployee.createDateOfBirth.day << endl;
-		fout << newEmployee.createDateOfBirth.month << endl;
-		fout << newEmployee.createDateOfBirth.year << endl;
+		cout << "Error" << endl;
 	}
-	fout.close();
-	cout << "New employee seccessful added..." << endl;
-	PAUSE
-	CLEAR
 }
 
 void listEmployee()
 {
-	int i = 0;
-	for (Employee item : employees)
+	for (int i = 0; i < countEmployee; i++)
 	{
-		cout << ++i << " " << item.name << "\t" << item.surname << "\t" << item.education << "\t" << item.age << "\t" << item.createDateOfBirth.day << "\t" << item.createDateOfBirth.month << "\t" << item.createDateOfBirth.year << endl;
+		cout << i << ") " << employee[i].name
+			<< "\t" << employee[i].surname
+			<< "\t" << employee[i].education
+			<< "\t" << employee[i].age
+			<< "\t" << employee[i].createDateOfBirth.day
+			<< ":" << employee[i].createDateOfBirth.month
+			<< ":" << employee[i].createDateOfBirth.year << endl;
 	}
-	cout << endl;
 }
 
 void EmployeeListBySurname()
 {
-	cout << "Enter surname" << endl;
-	int i = 0;
-	string surnam;
-	cin >> surnam;
-	for (Employee item : employees)
+	string surname;
+	cout << "Enter surname which employee you want to find" << endl;
+	cin >> surname;
+	for (int i = 0; i < countEmployee; i++)
 	{
-		if(item.surname == surnam)
-		cout << ++i << " " << item.name << "\t" << item.surname << "\t" << item.education << "\t" << item.age << "\t" << item.createDateOfBirth.day << "\t" << item.createDateOfBirth.month << "\t" << item.createDateOfBirth.year << endl;
+		if (employee[i].surname == surname)
+		{
+			cout << employee[i].name
+				<< "\t" << employee[i].surname
+				<< "\t" << employee[i].education
+				<< "\t" << employee[i].age
+				<< "\t" << employee[i].createDateOfBirth.day
+				<< ":" << employee[i].createDateOfBirth.month
+				<< ":" << employee[i].createDateOfBirth.year << endl;
+		}
 	}
-	cout << endl;
 }
 
 void EmployeeListByAge()
 {
-	cout << "Enter age" << endl;
-	int i = 0;
 	string age;
+	cout << "Enter age which employee you want to find" << endl;
 	cin >> age;
-	for (Employee item : employees)
+	for (int i = 0; i < countEmployee; i++)
 	{
-		if (item.age == age)
-			cout << ++i << " " << item.name << "\t" << item.surname << "\t" << item.education << "\t" << item.age << "\t" << item.createDateOfBirth.day << "\t" << item.createDateOfBirth.month << "\t" << item.createDateOfBirth.year << endl;
+		if (employee[i].age == age)
+		{
+			cout << employee[i].name
+				<< "\t" << employee[i].surname
+				<< "\t" << employee[i].education
+				<< "\t" << employee[i].age
+				<< "\t" << employee[i].createDateOfBirth.day
+				<< ":" << employee[i].createDateOfBirth.month
+				<< ":" << employee[i].createDateOfBirth.year << endl;
+		}
 	}
-	cout << endl;
 }
 
 void EmployeeListByLetter()
 {
-	//cout << "Enter letter" << endl;
-	//char letter;
-	//cin >> letter;
-	//fstream fs;
-	//fs.open(fileName, fstream::in | fstream::out);
-	//bool isOpen = fs.is_open();
-	//if (isOpen == false)
-	//{
-	//	cout << "Error: Application can't connect to database file" << endl;
-	//}
-	//else
-	//{
-	//	int currentString = 0;
-	//	string data2;
-	//	bool w = false;
-	//	while (!fs.eof())
-	//	{
-	//		currentString++;
-	//		getline(fs, data2);
-	//		if (currentString == 1 && data2[0] == letter)
-	//		{
-	//			if (currentString == 1 && data2[0] == letter)
-	//			{
-	//				cout << data2 << "\t";
-	//			}
-	//			else if (currentString == 2)
-	//			{
-	//				cout << data2 << "\t";
-	//			}
-	//			else if (currentString == 3)
-	//			{
-	//				cout << data2 << "\t";
-	//			}
-	//			else if (currentString == 4)
-	//			{
-	//				cout << data2 << "\t";
-	//			}
-	//			else if (currentString == 5)
-	//			{
-	//				cout << data2 << "\t";
-	//			}
-	//			else if (currentString == 6)
-	//			{
-	//				cout << data2 << "\t";
-	//			}
-	//			else if (currentString == 7)
-	//			{
-	//				cout << data2 << "\t";
-	//				currentString = 0;
-	//			}
-	//		}
-	//	}
-	//	//cout << i << endl;
-	//}
-	//fs.close();
-
-	cout << "Enter letter" << endl;
 	char letter;
+	cout << "Enter first letter of surnafe of employee which you want to find" << endl;
 	cin >> letter;
-	for (Employee item : employees)
+	for (int i = 0; i < countEmployee; i++)
 	{
-		if (item.surname[0] == letter)
+		if (employee[i].surname[0] == letter)
 		{
-			cout << item.name << "\t" << item.surname << "\t" << item.education << "\t" << item.age << "\t" << item.createDateOfBirth.day << "\t" << item.createDateOfBirth.month << "\t" << item.createDateOfBirth.year << endl;
+			cout << employee[i].name
+				<< "\t" << employee[i].surname
+				<< "\t" << employee[i].education
+				<< "\t" << employee[i].age
+				<< "\t" << employee[i].createDateOfBirth.day
+				<< ":" << employee[i].createDateOfBirth.month
+				<< ":" << employee[i].createDateOfBirth.year << endl;
 		}
 	}
-	cout << endl;
+}
+
+void editEmployee()
+{
+	int finish = 0;
+	int count = 0;
+	int count2 = 0;
+	string edit;
+	do
+	{
+		cout << "Edit employee" << endl;
+		listEmployee();
+		cout << "You want to exit? 1 - yes; 2 - no" << endl;
+		cin >> finish;
+		if (finish == 1)
+		{
+			ofstream fout;
+			fout.open("Employee.txt");
+			bool isOpen = fout.is_open();
+			if (isOpen == false)
+			{
+				cout << "Error" << endl;
+			}
+			else
+			{
+				for (int i = 0; i < countEmployee; i++)
+				{
+					fout << employee[i].name << endl;
+					fout << employee[i].surname << endl;
+					fout << employee[i].education << endl;
+					fout << employee[i].age << endl;
+					fout << employee[i].createDateOfBirth.day << endl;
+					fout << employee[i].createDateOfBirth.month << endl;
+					fout << employee[i].createDateOfBirth.year << endl;
+				}
+			}
+			fout.close();
+			PAUSE
+			CLEAR
+			break;
+		}
+		else if (finish == 2)
+		{
+			cout << "Enter number of employee which you want to edit" << endl;
+			cin >> count;
+			cout << "Chose what you want to edit:" << endl;
+			cout << "1 - edit name" << endl;
+			cout << "2 - edit surnema" << endl;
+			cout << "3 - edit education" << endl;
+			cout << "4 - edit age" << endl;
+			cout << "5 - edit day of birth" << endl;
+			cout << "6 - edit month of birth" << endl;
+			cout << "7 - edit year of birth" << endl;
+			cout << "0 - exit" << endl;
+			cin >> count2;
+			switch (count2)
+			{
+			case 1:
+			{
+				CLEAR
+					cout << "Enter the name you want to change" << endl;
+				cin >> edit;
+				employee[count].name = edit;
+				cout << "Changes completed successfully" << endl;
+				PAUSE
+					CLEAR
+			}
+			break;
+			case 2:
+			{
+				CLEAR
+					cout << "Enter the surname you want to change" << endl;
+				cin >> edit;
+				employee[count].surname = edit;
+				cout << "Changes completed successfully" << endl;
+				PAUSE
+					CLEAR
+			}
+			break;
+			case 3:
+			{
+				CLEAR
+					cout << "Enter the education you want to change" << endl;
+				cin >> edit;
+				employee[count].education = edit;
+				cout << "Changes completed successfully" << endl;
+				PAUSE
+					CLEAR
+			}
+			break;
+			case 4:
+			{
+				CLEAR
+					cout << "Enter the age you want to change" << endl;
+				cin >> edit;
+				employee[count].age = edit;
+				cout << "Changes completed successfully" << endl;
+				PAUSE
+					CLEAR
+			}
+			break;
+			case 5:
+			{
+				CLEAR
+					cout << "Enter the day of birth you want to change" << endl;
+				cin >> edit;
+				employee[count].createDateOfBirth.day = edit;
+				cout << "Changes completed successfully" << endl;
+				PAUSE
+					CLEAR
+			}
+			break;
+			case 6:
+			{
+				CLEAR
+					cout << "Enter the edit month of birth you want to change" << endl;
+				cin >> edit;
+				employee[count].createDateOfBirth.month = edit;
+				cout << "Changes completed successfully" << endl;
+				PAUSE
+					CLEAR
+			}
+			break;
+			case 7:
+			{
+				CLEAR
+					cout << "Enter the edit year of birth you want to change" << endl;
+				cin >> edit;
+				employee[count].createDateOfBirth.year = edit;
+				cout << "Changes completed successfully" << endl;
+				PAUSE
+					CLEAR
+			}
+			break;
+			case 0:
+			{
+				break;
+			}
+			break;
+			default:
+				break;
+			}
+		}
+	} while (count2 != 0);
 }
 
 void deleteEmployeeByName()
 {
-	cout << "Enter the name wich employee you want delete" << endl;
-	string name;
-	cin >> name;
-	for (Employee item : employees)
+	int count = 0;
+	cout << "All employees: " << endl;
+	listEmployee();
+	cout << endl;
+	cout << "Which employee you want to delete" << endl;
+	cin >> count;
+	Employee *temp2 = new Employee[countEmployee - 1];
+	for (int i = 0, j = 0; i < countEmployee; i++)
 	{
-		if (item.surname == name)
+		if (i != count)
 		{
-			//cout << item.name << "\t" << item.surname << "\t" << item.education << "\t" << item.age << "\t" << item.createDateOfBirth.day << "\t" << item.createDateOfBirth.month << "\t" << item.createDateOfBirth.year << endl;
+			temp2[j] = employee[i];
+			j++;
 		}
 	}
-	cout << endl;
-
+	countEmployee--;
+	delete[]employee;
+	employee = temp2;
+	ofstream fout;
+	fout.open("Employee.txt");
+	bool isOpen = fout.is_open();
+	if (isOpen == false)
+	{
+		cout << "Error" << endl;
+	}
+	else
+	{
+		for (int i = 0; i < countEmployee; i++)
+		{
+			fout << employee[i].name << endl;
+			fout << employee[i].surname << endl;
+			fout << employee[i].education << endl;
+			fout << employee[i].age << endl;
+			fout << employee[i].createDateOfBirth.day << endl;
+			fout << employee[i].createDateOfBirth.month << endl;
+			fout << employee[i].createDateOfBirth.year << endl;
+		}
+	}
+	fout.close();
+	cout << "Removal successfully completed" << endl;
+	PAUSE
+	CLEAR
 }
-
-
-
-

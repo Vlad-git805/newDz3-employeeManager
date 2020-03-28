@@ -18,6 +18,8 @@ void main()
 		cout << "3 - list employee by surname" << endl;
 		cout << "4 - list employee by age" << endl;
 		cout << "5 - list employee by first letter of surname" << endl;
+		cout << "6 - edit information" << endl;
+		cout << "7 - remove emloyee" << endl;
 		cout << "0 - exit" << endl;
 		cin >> a;
 		CLEAR
@@ -54,6 +56,11 @@ void main()
 		}
 		break;
 		case 6:
+		{
+			editEmployee();
+		}
+		break;
+		case 7:
 		{
 			cout << "Delete employee" << endl;
 			deleteEmployeeByName();

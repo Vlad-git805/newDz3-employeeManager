@@ -32,6 +32,7 @@ void listEmployee();
 void EmployeeListBySurname();
 void EmployeeListByAge();
 void EmployeeListByLetter();
+void editEmployee();
 void deleteEmployeeByName();
 
 
